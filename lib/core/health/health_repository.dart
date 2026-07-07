@@ -11,12 +11,6 @@ class HealthRepository {
     if (Platform.isAndroid) {
       usageGranted = await UsageStats.checkUsagePermission() ?? false;
     }
-    try {
-      await _health.requestAuthorization([HealthDataType.STEPS], permissions: [HealthDataAccess.READ]);
-      if (Platform.isAndroid) {
-        await _health.requestHealthDataInBackgroundAuthorization();
-      }
-    } catch (_) {}
 
     return usageGranted; // Only strictly require Usage stats
   }
@@ -30,9 +24,9 @@ class HealthRepository {
     ];
     
     try {
-      await _health.requestAuthorization(types, permissions: permissions);
+      await _health.requestAuthorization(types, permissions: permissions).timeout(const Duration(seconds: 5));
       if (Platform.isAndroid) {
-        await _health.requestHealthDataInBackgroundAuthorization();
+        await _health.requestHealthDataInBackgroundAuthorization().timeout(const Duration(seconds: 5));
       }
     } catch (_) {
       // Ignore if health connect is not installed or cancelled
@@ -55,7 +49,10 @@ class HealthRepository {
       final startOfDay = DateTime(now.year, now.month, now.day);
       
       // Get Steps
-      int? steps = await _health.getTotalStepsInInterval(startOfDay, now);
+      int? steps;
+      try {
+        steps = await _health.getTotalStepsInInterval(startOfDay, now).timeout(const Duration(seconds: 3));
+      } catch (_) {}
       
       // Get Screen Time & Pickups
       double screenTimeHours = 0.0; // default

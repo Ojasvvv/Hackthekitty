@@ -21,9 +21,7 @@ The interactive terminal with your sassy virtual companion.
 ## 4. Home Screen & Navigation (`features/home`, `features/navigation`)
 The primary dashboard.
 - Displays the Rive/Lottie animation of the Moody Cat based on the state calculated by the `mood_engine`.
-- Incorporates the "Daily Vibe Check" prompt, allowing users to log their emotional state, which instantly alters the cat's behavior.
 
 ## 5. Secondary Features
-- **Journal (`features/journal`):** A brutalist diary for self-reflection. Entries are analyzed locally to adjust the overarching mood metrics.
 - **Challenges (`features/challenges`):** Long-term goals (e.g., "Keep screentime under 2 hours for 5 days") that grant massive Treat payouts.
 - **Focus / Relief (`features/focus`, `features/relief`):** Pomodoro timers and guided breathing exercises, utilizing Neobrutalist micro-interactions to retain attention.

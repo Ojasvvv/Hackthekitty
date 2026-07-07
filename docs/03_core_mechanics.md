@@ -9,7 +9,6 @@ This is the heart of the gamification loop. The home screen features a virtual f
 The engine evaluates data on app startup and during background polling:
 - **Ecstatic (Zoomies):** Triggered when the `health` module reports > 10,000 steps.
 - **Angry / Lethargic:** Triggered when the `usage_stats` module reports screen time > 3 hours. The cat actively turns its back on the user.
-- **Sympathetic:** Triggered if the user logs a poor mood in the `journal` module. The AI system prompt is updated to be comforting rather than judgmental.
 
 ## 2. Health & Telemetry Sensors (`health`)
 Because Apple's HealthKit and iOS sandbox restrict background screen time polling without MDM enterprise profiles, Purrist relies heavily on native Android APIs.
@@ -23,8 +22,7 @@ What good is a digital pet if you can't spoil it? The economy module governs the
 ### Earning Treats
 The economy loop incentivizes daily health habits. Users earn treats by:
 1. **Hunting Prey (Scratchpad Tasks):** Completing a task instantly grants treats.
-2. **Daily Vibe Check:** Logging daily emotions in the journal.
-3. **Cat Nap Mastery:** Keeping daily screen time under the 3-hour limit.
+2. **Cat Nap Mastery:** Keeping daily screen time under the 3-hour limit.
 
 ### Meow Mart
 Users spend treats in the Meow Mart to purchase cosmetic upgrades. This provides a long-term progression system to ensure high user retention long after the novelty of the AI chat wears off.

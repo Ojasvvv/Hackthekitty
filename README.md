@@ -11,6 +11,8 @@
     <a href="#-installation--usage">Installation</a> •
     <a href="#-faq">FAQ</a>
   </p>
+</div>
+
 ---
 
 > [!CAUTION]
@@ -18,12 +20,14 @@
 > Android 13+ has a security feature called "Restricted Settings" that blocks the required `usage_stats` permission (which we use for screen time tracking). **It blocks this not because Purrist is a virus, but because Android heavily restricts accessibility/usage APIs by default for sideloaded apps.**
 >
 > **To fix this and allow the app to work:**
-> 1. Long-press the Purrist app icon on your home screen.
-> 2. Tap **App Info** (or the 'i' icon).
-> 3. Tap the **three dots** in the top right corner.
-> 4. Select **"Allow restricted settings"**.
+> 1. Open Purrist and tap **"Allow Access to Begin"**.
+> 2. This opens Android's "Usage Access" settings. Tap on **Purrist**.
+> 3. Try to toggle "Permit usage access" on. Android will block it and say it's a "Restricted setting". *(You MUST trigger this block first, or step 6 won't exist!)*
+> 4. Go to your home screen and long-press the Purrist app icon.
+> 5. Tap **App Info** (or the 'i' icon).
+> 6. Tap the **three dots** in the top right corner and select **"Allow restricted settings"**.
+> 7. Go back into Purrist and tap **"Allow Access to Begin"** again to actually grant the permissions.
 > *(Steps may vary slightly between Samsung, Pixel, and other Android devices).*
-> **Only after doing this can you grant the required permissions in the app!**
 
 ---
 
@@ -47,7 +51,6 @@ By combining **cutting-edge LLaMA 3 AI**, real-time device health metrics, and a
 Your home screen is a living, breathing feline companion powered by a complex internal state machine. The cat's mood dynamically shifts based on your real-time health data pulled silently from your device:
 - **High Physical Activity**: When the pedometer detects 10,000 steps, the cat becomes ecstatic, plays with digital yarn, and enters a "Zoomies" state.
 - **High Screentime**: If you exceed your screen time limits, the cat becomes lethargic, angry, and actively turns its back on you.
-- **Mental Check-ins**: If you log a poor mood in the Daily Vibe Check, the cat alters its behavior to act sympathetic and offers comforting, AI-generated words.
 
 ### 📜 2. The Scratchpad (Task Management)
 A highly opinionated, brutalist task manager designed to cut through procrastination. 
@@ -119,7 +122,7 @@ Want to experience the sass yourself? We have packaged the app into a fully sign
 ### Q: How exactly are Treats calculated?
 **A:** The economy is tied to your well-being. There are three main ways to earn:
 1. Hunt down (complete) tasks in the Scratchpad.
-2. Pass your Daily Vibe Check (logging your mood grants treats).
+2. Hit your daily health goals (steps and screen time).
 3. Keep your daily screentime under the 3-hour limit to fill up the Cat Nap challenge bar! 
 
 ### Q: Is my data safe?

@@ -15,19 +15,46 @@ class OnboardingScreen extends ConsumerStatefulWidget {
   ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with WidgetsBindingObserver {
   bool _isChecking = true;
+  bool _isDialogShowing = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _checkInitialPermissions();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (!_isChecking && !_isDialogShowing) {
+        _checkInitialPermissions();
+      }
+    }
   }
 
   Future<void> _checkInitialPermissions() async {
     final repo = ref.read(healthRepositoryProvider);
     final granted = await repo.checkPermissions();
     
+    if (granted) {
+      await _handleGrantedPermissions();
+    } else {
+      if (mounted) {
+        setState(() => _isChecking = false);
+      }
+    }
+  }
+
+  Future<void> _handleGrantedPermissions() async {
     final prefs = await SharedPreferences.getInstance();
     final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
     bool hasAdopted = prefs.containsKey('${uid}_cat_name_key');
@@ -41,12 +68,82 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       }
     }
 
-    if (granted && hasAdopted && mounted) {
+    if (!mounted) return;
+
+    if (hasAdopted) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const MainScaffold()),
       );
-    } else if (mounted) {
-      setState(() => _isChecking = false);
+    } else {
+      if (mounted) {
+        setState(() => _isChecking = false);
+      }
+      await _showAdoptionDialog();
+    }
+  }
+
+  Future<void> _showAdoptionDialog() async {
+    if (_isDialogShowing) return;
+    setState(() => _isDialogShowing = true);
+
+    final controller = TextEditingController();
+    final name = await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: const Text('Adopt Your Kitty 🐾', style: TextStyle(fontWeight: FontWeight.bold)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Every good kitty needs a name. What will you call yours?'),
+              const SizedBox(height: 16),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: 'e.g. Luna, Simba, Garfield...',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                  filled: true,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                final name = controller.text.trim();
+                if (name.isNotEmpty) {
+                  Navigator.pop(context, name);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Adopt!'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (mounted) {
+      setState(() => _isDialogShowing = false);
+    }
+
+    if (name != null && name.isNotEmpty) {
+      final prefs = await SharedPreferences.getInstance();
+      final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+      await prefs.setString('${uid}_cat_name_key', name);
+
+      if (!mounted) return;
+      ref.invalidate(healthSnapshotProvider);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const MainScaffold()),
+      );
     }
   }
 
@@ -58,6 +155,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
+    if (_isDialogShowing) {
+      return Scaffold(
+        backgroundColor: colorScheme.surface,
+        body: Center(
+          child: Icon(
+            Icons.pets,
+            size: 160,
+            color: colorScheme.onSurface.withOpacity(0.04),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -92,64 +202,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   if (!context.mounted) return;
                   
                   if (granted) {
-                    final controller = TextEditingController();
-                    await showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) {
-                        return AlertDialog(
-                          backgroundColor: Theme.of(context).colorScheme.surface,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                          title: const Text('Adopt Your Kitty 🐾', style: TextStyle(fontWeight: FontWeight.bold)),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text('Every good kitty needs a name. What will you call yours?'),
-                              const SizedBox(height: 16),
-                              TextField(
-                                controller: controller,
-                                autofocus: true,
-                                decoration: InputDecoration(
-                                  hintText: 'e.g. Luna, Simba, Garfield...',
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                                  filled: true,
-                                ),
-                              ),
-                            ],
-                          ),
-                          actions: [
-                            ElevatedButton(
-                              onPressed: () {
-                                final name = controller.text.trim();
-                                if (name.isNotEmpty) {
-                                  // Update name directly via SharedPreferences or Provider if accessible
-                                  Navigator.pop(context, name);
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).colorScheme.primary,
-                                foregroundColor: Colors.white,
-                              ),
-                              child: const Text('Adopt!'),
-                            ),
-                          ],
-                        );
-                      },
-                    ).then((name) {
-                      if (name != null && name is String) {
-                        // Assuming catNameProvider is imported or we just use SharedPreferences
-                        SharedPreferences.getInstance().then((prefs) {
-                           final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-                           prefs.setString('${uid}_cat_name_key', name);
-                        });
-                      }
-                    });
-
-                    if (!context.mounted) return;
-                    ref.invalidate(healthSnapshotProvider);
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const MainScaffold()),
-                    );
+                    await _handleGrantedPermissions();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
