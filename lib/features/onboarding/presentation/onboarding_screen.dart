@@ -6,6 +6,7 @@ import '../../../shared/theme/app_typography.dart';
 import '../../mood_engine/mood_provider.dart';
 import '../../navigation/presentation/main_scaffold.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -26,7 +27,21 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Future<void> _checkInitialPermissions() async {
     final repo = ref.read(healthRepositoryProvider);
     final granted = await repo.checkPermissions();
-    if (granted && mounted) {
+    
+    final prefs = await SharedPreferences.getInstance();
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    bool hasAdopted = prefs.containsKey('${uid}_cat_name_key');
+
+    if (!hasAdopted && prefs.containsKey('cat_name_key')) {
+      final oldName = prefs.getString('cat_name_key');
+      if (oldName != null) {
+        await prefs.setString('${uid}_cat_name_key', oldName);
+        await prefs.remove('cat_name_key');
+        hasAdopted = true;
+      }
+    }
+
+    if (granted && hasAdopted && mounted) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const MainScaffold()),
       );
@@ -45,6 +60,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
@@ -63,7 +79,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
               const SizedBox(height: 24),
               Text(
-                'Whisker reflects your daily habits—sleep, movement, and screen time—through the life of a virtual cat.\n\nNot a game. No points to earn. Just an honest reflection of how you\'re doing.',
+                'Purrist reflects your daily habits—sleep, movement, and screen time—through the life of a virtual cat.\n\nNot a game. No points to earn. Just an honest reflection of how you\'re doing.',
                 style: theme.textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
@@ -123,12 +139,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       if (name != null && name is String) {
                         // Assuming catNameProvider is imported or we just use SharedPreferences
                         SharedPreferences.getInstance().then((prefs) {
-                           prefs.setString('cat_name_key', name);
+                           final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+                           prefs.setString('${uid}_cat_name_key', name);
                         });
                       }
                     });
 
                     if (!context.mounted) return;
+                    ref.invalidate(healthSnapshotProvider);
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(builder: (_) => const MainScaffold()),
                     );

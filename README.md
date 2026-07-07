@@ -11,7 +11,19 @@
     <a href="#-installation--usage">Installation</a> •
     <a href="#-faq">FAQ</a>
   </p>
-</div>
+---
+
+> [!CAUTION]
+> **⚠️ CRITICAL: ANDROID PERMISSIONS WARNING ⚠️**
+> Android 13+ has a security feature called "Restricted Settings" that blocks the required `usage_stats` permission (which we use for screen time tracking). **It blocks this not because Purrist is a virus, but because Android heavily restricts accessibility/usage APIs by default for sideloaded apps.**
+>
+> **To fix this and allow the app to work:**
+> 1. Long-press the Purrist app icon on your home screen.
+> 2. Tap **App Info** (or the 'i' icon).
+> 3. Tap the **three dots** in the top right corner.
+> 4. Select **"Allow restricted settings"**.
+> *(Steps may vary slightly between Samsung, Pixel, and other Android devices).*
+> **Only after doing this can you grant the required permissions in the app!**
 
 ---
 

@@ -20,7 +20,7 @@ class TreatRepository {
 
   TreatRepository(this._prefs, this._userId);
   
-  String get _treatsKey => '${_userId}_whisker_treats';
+  String get _treatsKey => '${_userId}_purrist_treats';
 
   int getTreats() {
     final treats = _prefs.getInt(_treatsKey);

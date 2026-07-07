@@ -20,7 +20,7 @@ class InventoryRepository {
 
   InventoryRepository(this._prefs, this._userId);
   
-  String get _inventoryKey => '${_userId}_whisker_inventory';
+  String get _inventoryKey => '${_userId}_purrist_inventory';
 
   List<String> getUnlockedItems() {
     return _prefs.getStringList(_inventoryKey) ?? [];

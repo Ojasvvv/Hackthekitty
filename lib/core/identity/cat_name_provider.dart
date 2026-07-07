@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const String _catNameKey = 'cat_name_key';
+import 'package:firebase_auth/firebase_auth.dart';
+
+String get _catNameKey => '${FirebaseAuth.instance.currentUser?.uid}_cat_name_key';
 const String _defaultName = 'Kitty';
 
 class CatNameNotifier extends Notifier<String> {

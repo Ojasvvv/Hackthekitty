@@ -94,7 +94,7 @@ class WhiskerApp extends ConsumerWidget {
     final themeData = AppTheme.getThemeData(brightness);
 
     return MaterialApp(
-      title: 'Whisker',
+      title: 'Purrist',
       debugShowCheckedModeBanner: false,
       theme: themeData,
       themeMode: themeMode,
