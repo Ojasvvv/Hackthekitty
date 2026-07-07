@@ -22,11 +22,12 @@
 > **To fix this and allow the app to work:**
 > 1. Open Purrist and tap **"Allow Access to Begin"**.
 > 2. This opens Android's "Usage Access" settings. Tap on **Purrist**.
-> 3. Try to toggle "Permit usage access" on. Android will block it and say it's a "Restricted setting". *(You MUST trigger this block first, or step 6 won't exist!)*
-> 4. Go to your home screen and long-press the Purrist app icon.
-> 5. Tap **App Info** (or the 'i' icon).
-> 6. Tap the **three dots** in the top right corner and select **"Allow restricted settings"**.
-> 7. Go back into Purrist and tap **"Allow Access to Begin"** again to actually grant the permissions.
+> 3. Try to toggle "Permit usage access" on. Android will show a popup saying the app was denied access.
+> 4. In that popup, click the text that says **"Learn how to allow access"** (or similar). *(You MUST click this to unlock step 7!)*
+> 5. Go to your home screen and long-press the Purrist app icon.
+> 6. Tap **App Info** (or the 'i' icon).
+> 7. Tap the **three dots** in the top right corner and select **"Allow restricted settings"**.
+> 8. Go back into Purrist and tap **"Allow Access to Begin"** again to actually grant the permissions.
 > *(Steps may vary slightly between Samsung, Pixel, and other Android devices).*
 
 ---
